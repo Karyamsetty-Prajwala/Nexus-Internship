@@ -1,0 +1,51 @@
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Loading the Iris dataset
+iris_df = sns.load_dataset('iris')
+
+# Displaying the first few rows of the dataset
+print(iris_df.head())
+
+# Summary  of statistics of the dataset
+print(iris_df.describe())
+
+# Pairplotting  to visualize relationships between  the features
+sns.pairplot(iris_df, hue='species', markers=['o', 's', 'D'])
+plt.show()
+
+# Box plotting to visualize the distribution of each feature for each species mentioned
+plt.figure(figsize=(12, 8))
+
+plt.subplot(2, 2, 1)
+sns.boxplot(x='species', y='sepal_length', data=iris_df)
+
+plt.subplot(2, 2, 2)
+sns.boxplot(x='species', y='sepal_width', data=iris_df)
+
+plt.subplot(2, 2, 3)
+sns.boxplot(x='species', y='petal_length', data=iris_df)
+
+plt.subplot(2, 2, 4)
+sns.boxplot(x='species', y='petal_width', data=iris_df)
+
+plt.show()
+
+# Histograms to visualize the distribution of each feature
+plt.figure(figsize=(12, 8))
+
+plt.subplot(2, 2, 1)
+sns.histplot(iris_df['sepal_length'], kde=True)
+
+plt.subplot(2, 2, 2)
+sns.histplot(iris_df['sepal_width'], kde=True)
+
+plt.subplot(2, 2, 3)
+sns.histplot(iris_df['petal_length'], kde=True)
+
+plt.subplot(2, 2, 4)
+sns.histplot(iris_df['petal_width'], kde=True)
+
+plt.show()
