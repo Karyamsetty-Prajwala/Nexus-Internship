@@ -1,0 +1,22 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+df = pd.read_csv('test.csv')
+
+# Checks the distribution of sentiment labels
+sentiment_distribution = df['sentiment'].value_counts()
+
+# Visualizes the  sentiment distribution using a pie chart
+plt.figure(figsize=(8, 8))
+plt.pie(sentiment_distribution, labels=sentiment_distribution.index, autopct='%1.1f%%', startangle=90, colors=['green', 'yellow', 'red'])
+plt.title('Sentiment Distribution')
+plt.show()
+
+# Visualizes the  sentiment distribution using a bar chart
+plt.figure(figsize=(10, 6))
+plt.bar(sentiment_distribution.index, sentiment_distribution.values, color=['green', 'yellow', 'red'])
+plt.title('Sentiment Distribution')
+plt.xlabel('Sentiment')
+plt.ylabel('Count')
+plt.show()
