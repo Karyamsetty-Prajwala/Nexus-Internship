@@ -1,0 +1,33 @@
+import pandas as pd
+df = pd.read_csv('test.csv')
+
+# Displays the  basic information about the dataset
+print("Dataset Info:")
+print(df.info())
+
+# Displays the first few rows of the dataset 
+print("\nFirst few rows of the dataset:")
+print(df.head())
+
+# Displays the  descriptive statistics for the  numerical columns 
+print("\nDescriptive statistics:")
+print(df.describe())
+
+# Checks for the  missing values
+print("\nMissing values:")
+print(df.isnull().sum())
+
+# Checks the distribution of sentiment labels
+sentiment_distribution = df['sentiment'].value_counts()
+print("\nSentiment Distribution:")
+print(sentiment_distribution)
+
+# Displays the size of the dataset
+print("\nDataset Size:")
+print("Number of Rows:", df.shape[0])
+print("Number of Columns:", df.shape[1])
+
+# Displays unique values in the 'sentiment' column
+unique_sentiments = df['sentiment'].unique()
+print("\nUnique Sentiments:")
+print(unique_sentiments)
