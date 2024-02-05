@@ -1,0 +1,38 @@
+import spacy
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score
+
+
+df = pd.read_csv('test.csv')
+
+# Load spaCy's pre-trained model for sentiment analysis
+nlp = spacy.load("en_core_web_sm")
+
+# Define a function to preprocess and classify text using spaCy
+def classify_text(text):
+    doc = nlp(text)
+    # spaCy assigns a sentiment score ranging from -1 (negative) to 1 (positive)
+    sentiment_score = doc.sentiment.polarity
+    # Classify as positive, negative, or neutral based on the sentiment score
+    if sentiment_score > 0:
+        return 'positive'
+    elif sentiment_score < 0:
+        return 'negative'
+    else:
+        return 'neutral'
+
+# Apply the classification function to the 'text' column
+df['predicted_sentiment'] = df['text'].apply(classify_text)
+
+# Split the dataset into training and testing sets
+train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
+
+# Evaluate the performance of the model
+accuracy = accuracy_score(test_df['sentiment'], test_df['predicted_sentiment'])
+classification_report_output = classification_report(test_df['sentiment'], test_df['predicted_sentiment'])
+
+# Display the evaluation results
+print(f"Accuracy: {accuracy:.4f}")
+print("Classification Report:")
+print(classification_report_output)
