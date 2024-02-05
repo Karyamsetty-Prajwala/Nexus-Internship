@@ -1,0 +1,51 @@
+import spacy
+import pandas as pd
+from sklearn.model_selection import StratifiedKFold
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score, classification_report
+
+
+df = pd.read_csv('test.csv')
+
+# Load spaCy's pre-trained model for text processing
+nlp = spacy.load("en_core_web_sm")
+
+# Define the pipeline with CountVectorizer and Logistic Regression
+pipeline = Pipeline([
+    ('vectorizer', CountVectorizer(analyzer='word', tokenizer=nlp.tokenizer, stop_words='english')),
+    ('classifier', LogisticRegression())
+])
+
+# Define the number of splits for Stratified K-Fold Cross-Validation
+num_splits = 5
+stratified_kfold = StratifiedKFold(n_splits=num_splits, shuffle=True, random_state=42)
+
+# Initialize variables to store evaluation results
+accuracy_scores = []
+classification_reports = []
+
+# Perform Stratified K-Fold Cross-Validation
+for train_index, test_index in stratified_kfold.split(df['text'], df['sentiment']):
+    # Split the dataset into training and testing sets
+    train_data, test_data = df.iloc[train_index], df.iloc[test_index]
+    
+    # Fit the model on the training data
+    pipeline.fit(train_data['text'], train_data['sentiment'])
+    
+    # Make predictions on the test data
+    predictions = pipeline.predict(test_data['text'])
+    
+    # Evaluate the model
+    accuracy = accuracy_score(test_data['sentiment'], predictions)
+    classification_report_output = classification_report(test_data['sentiment'], predictions)
+    
+    # Store evaluation results
+    accuracy_scores.append(accuracy)
+    classification_reports.append(classification_report_output)
+
+# Display the average evaluation results over all folds
+print(f"Average Accuracy: {sum(accuracy_scores) / num_splits:.4f}")
+print("Average Classification Report:")
+print(pd.DataFrame([pd.Series(eval_report) for eval_report in classification_reports]).mean())
