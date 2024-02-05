@@ -1,0 +1,39 @@
+import spacy
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
+import lime  # Install lime using: pip install lime
+
+
+df = pd.read_csv('test.csv')
+
+# Load spaCy's pre-trained model for text processing
+nlp = spacy.load("en_core_web_sm")
+
+# Split the dataset into training and testing sets
+train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
+
+# Define the pipeline with CountVectorizer and Logistic Regression
+pipeline = Pipeline([
+    ('vectorizer', CountVectorizer(analyzer='word', tokenizer=nlp.tokenizer, stop_words='english')),
+    ('classifier', LogisticRegression())
+])
+
+# Fit the model on the training data
+pipeline.fit(train_df['text'], train_df['sentiment'])
+
+# Use LIME to explain a single prediction
+from lime import lime_text
+from lime.lime_text import LimeTextExplainer
+
+# Choose a specific instance for explanation (e.g., the first test instance)
+text_instance = test_df['text'].iloc[0]
+classifier_fn = lambda x: pipeline.predict_proba(x)
+
+explainer = LimeTextExplainer(class_names=['negative', 'neutral', 'positive'])
+explanation = explainer.explain_instance(text_instance, classifier_fn, num_features=10)
+
+# Visualize the explanation
+explanation.show_in_notebook(text=text_instance)
