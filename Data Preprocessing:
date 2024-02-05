@@ -1,0 +1,45 @@
+import pandas as pd
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+import string
+
+# Download NLTK resources
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+
+
+df = pd.read_csv('test.csv')
+
+# Function for text preprocessing
+def preprocess_text(text):
+    # Convert to lowercase
+    text = text.lower()
+    
+    # Removing  special characters and punctuation
+    text = ''.join([char for char in text if char not in string.punctuation])
+    
+    # Tokenization
+    tokens = word_tokenize(text)
+    
+    # Removes the stopwords
+    stop_words = set(stopwords.words('english'))
+    tokens = [word for word in tokens if word.lower() not in stop_words]
+    
+    # Lemmatization
+    lemmatizer = WordNetLemmatizer()
+    tokens = [lemmatizer.lemmatize(word) for word in tokens]
+    
+    return ' '.join(tokens)
+
+# Apply text preprocessing to the 'text' column
+df['processed_text'] = df['text'].apply(preprocess_text)
+
+# Display the original and processed text side by side
+print("Original Text:")
+print(df['text'].head())
+
+print("\nProcessed Text:")
+print(df['processed_text'].head())
