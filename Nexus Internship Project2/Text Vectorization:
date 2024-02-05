@@ -1,0 +1,17 @@
+from sklearn.feature_extraction.text import CountVectorizer
+import pandas as pd
+
+
+df = pd.read_csv('test.csv')
+
+# Initialize the CountVectorizer
+vectorizer = CountVectorizer()
+
+# Fit and transform the preprocessed text to numerical vectors
+X = vectorizer.fit_transform(df['processed_text'])
+
+# Convert the sparse matrix to a dense array and create a DataFrame
+vectorized_df = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())
+
+# Display the resulting DataFrame
+print(vectorized_df.head())
